@@ -5,48 +5,30 @@ import (
 	"strings"
 )
 
-func main() {
-	conferenceName := "Go Conference"
-	const conferenceTickets int = 50
+	//package level variable
+	const conferenceTickets int = 50	
+	var conferenceName = "Go Conference"
 	var remainingTickets uint = 50
-	bookings := []string{}
+	var bookings = []string{}
 
-	greetUsers(conferenceName, conferenceTickets, remainingTickets)
+func main() {
+
+	greetUsers()
 
 	for {
-		var firstName string
-		var lastName string
-		var email string
-		var userTickets uint
-		// ask user for their name
 
-		fmt.Println("Enter your first name: ")
-		fmt.Scan(&firstName)
-
-		fmt.Println("Enter your last name: ")
-		fmt.Scan(&lastName)
-
-		fmt.Println("Enter your email name: ")
-		fmt.Scan(&email)
-
-		fmt.Println("Enter the number of tickets: ")
-		fmt.Scan(&userTickets)
-
-		isValidName := len(firstName) >= 2 && len(lastName) >= 2
-		isValidEmail := strings.Contains(email, "@")
-		isValidTicketNumber := userTickets > 0 && userTickets <= remainingTickets
+		firstName, lastName, email, userTickets := getUserInput()
+		isValidName, isValidEmail, isValidTicketNumber := validateUserInput(firstName, lastName, email, userTickets)
 
 		if isValidName && isValidEmail && isValidTicketNumber {
-			remainingTickets = remainingTickets - userTickets
-			bookings = append(bookings, firstName+" "+lastName)
 
-			fmt.Printf("Thank you %v %v for booking %v tickets. You will recieve a confirmation email at %v\n", firstName, lastName, userTickets, email)
-			fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
+			bookTicket( userTickets, firstName, lastName, email)
 
-			printFirstNames(bookings)
+			firstNames := getFirstNames()
+
+			fmt.Printf("The first names of bookings are: %v\n", firstNames)
 
 			if remainingTickets == 0 {
-				//end program
 				fmt.Println("Our Go Conference Is Booked OUt")
 				break
 			}
@@ -66,13 +48,13 @@ func main() {
 
 }
 
-func greetUsers(confName string, confTickets int, remainingTickets uint) {
-	fmt.Printf("Welcome to our %v booking application\n", confName)
-	fmt.Printf("We have total of %v tickets and %v are available.\n", confTickets, remainingTickets)
-	fmt.Println("Get your tickets here to attend", confName)
+func greetUsers() {
+	fmt.Printf("Welcome to our %v booking application\n", conferenceName)
+	fmt.Printf("We have total of %v tickets and %v are available.\n", conferenceTickets, remainingTickets)
+	fmt.Println("Get your tickets here to attend", conferenceName)
 }
 
-func printFirstNames(bookings []string) {
+func getFirstNames() []string {
 	firstNames := []string{}
 	for _, booking := range bookings {
 		var names = strings.Fields(booking)
@@ -80,5 +62,42 @@ func printFirstNames(bookings []string) {
 		firstNames = append(firstNames, firstName)
 	}
 
-	fmt.Printf("The First names of bookings are: %v\n", firstNames)
+	return firstNames
+}
+
+func validateUserInput(firstName string, lastName string, email string, userTickets uint) (bool, bool, bool) {
+	isValidName := len(firstName) >= 2 && len(lastName) >= 2
+	isValidEmail := strings.Contains(email, "@")
+	isValidTicketNumber := userTickets > 0 && userTickets <= remainingTickets
+
+	return isValidName, isValidEmail, isValidTicketNumber
+}
+
+func getUserInput() (string, string, string, uint) {
+	var firstName string
+	var lastName string
+	var email string
+	var userTickets uint
+
+	fmt.Println("Enter your first name: ")
+	fmt.Scan(&firstName)
+
+	fmt.Println("Enter your last name: ")
+	fmt.Scan(&lastName)
+
+	fmt.Println("Enter your email name: ")
+	fmt.Scan(&email)
+
+	fmt.Println("Enter the number of tickets: ")
+	fmt.Scan(&userTickets)
+
+	return firstName, lastName, email, userTickets
+}
+
+func bookTicket(userTickets uint, firstName string, lastName string, email string) {
+	remainingTickets = remainingTickets - userTickets
+	bookings = append(bookings, firstName+" "+lastName)
+
+	fmt.Printf("Thank you %v %v for booking %v tickets. You will recieve a confirmation email at %v\n", firstName, lastName, userTickets, email)
+	fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
 }
